@@ -1,8 +1,9 @@
 name: Tag - Publish Docker image & deploy
 
 on:
-  create:
-    tags: ['*']
+  push:
+    tags:
+      - '*'
 
 jobs:
   push_to_docker_hub:
