@@ -53,14 +53,14 @@ jobs:
           cluster_name: 'go-cluster-gke-gke'
           location: 'europe-west1'
       - name: Install Helm chart
-        run: |
-          helm upgrade \
-          --install \
-          --create-namespace \
-          -n devops-challenge \
-          --set image.tag=${{ env.TAG_NAME }} \
+        run: >
+          helm upgrade
+          --install
+          --create-namespace
+          -n devops-challenge
+          --set image.tag=${{ env.TAG_NAME }}
           --kubeconfig ${{ env.KUBECONFIG }}
-          go-app \
+          go-app
           ./go-app-charts/charts/go-app-${{ env.TAG_NAME }}.tgz
   
   package_helm:
