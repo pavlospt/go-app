@@ -32,6 +32,17 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: "pavlospt/go-app:${{ env.TAG_NAME }}"
+      - uses: sigstore/cosign-installer@main
+      - name: Sign Docker image
+        run: >
+          cosign sign 
+          -a "repo=${{ github.repository }}"
+          -a "workflow=${{ github.workflow }}"
+          -a "ref=${{ github.sha }}"
+          pavlospt/go-app:${{ env.BRANCH_NAME }}
+        env:
+          # This is needed in order to use Sigstore Fulcio instance
+          COSIGN_EXPERIMENTAL: "true"
       - uses: azure/setup-helm@v1
       - name: Package Helm charts
         run: >
