@@ -78,4 +78,4 @@ jobs:
       - name: Create a Github release with Helm package
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ github.workspace }}/go-app-chart-${{ env.TAG_NAME }}.tgz
+          files: go-app-chart-*.tgz
