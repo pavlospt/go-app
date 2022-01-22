@@ -1,0 +1,8 @@
+services:
+  app:
+    container_name: go-app
+    image: go-app
+    build:
+      context: .
+    ports:
+      - 8080:8080
