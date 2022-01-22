@@ -44,7 +44,7 @@ jobs:
       - name: Authenticate with Google project
         uses: 'google-github-actions/auth@v0'
         with:
-          workload_identity_provider: 'projects/761151480908/locations/global/workloadIdentityPools/github-actions-identity-pool'
+          workload_identity_provider: 'projects/761151480908/locations/global/workloadIdentityPools/github-actions-identity-pool/providers/github-actions-idp'
           service_account: 'gha-sa@go-cluster-gke.iam.gserviceaccount.com'
       - name: Export KUBECONFIG credentials
         uses: 'google-github-actions/get-gke-credentials@v0'
