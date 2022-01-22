@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: pavlospt/go-app
   pullPolicy: Always
-  tag: ""
+  tag: "latest"
 
 labels: "go-app"
 selectorLabels: "go-app"
