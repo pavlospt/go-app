@@ -34,12 +34,12 @@ jobs:
           tags: "pavlospt/go-app:${{ env.TAG_NAME }}"
       - uses: azure/setup-helm@v1
       - name: Package Helm charts
-        run: helm package go-app-charts -d go-app-charts/charts --app-version ${{ env.TAG_NAME }} --version ${{ env.TAG_NAME }}
-      - name: Upload Helm chart artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: go-app-chart-${{ env.TAG_NAME }}.tgz
-          path: go-app-charts/charts/go-app-${{ env.TAG_NAME }}.tgz
+        run: >
+          helm package 
+          go-app-charts 
+          -d go-app-charts/charts 
+          --app-version ${{ env.TAG_NAME }} 
+          --version ${{ env.TAG_NAME }}
       # The following steps are needed in order to get a kubeconfig entry with our credentials
       - name: Authenticate with Google project
         uses: 'google-github-actions/auth@v0'
@@ -66,16 +66,22 @@ jobs:
   package_helm:
     name: Prepare application Helm package
     runs-on: ubuntu-latest
-    needs: push_to_docker_hub
     permissions:
       contents: write
     steps:
       - name: Extract tag name
         run: echo "TAG_NAME=$(echo ${GITHUB_REF#refs/tags/})" >> $GITHUB_ENV
-      - uses: actions/download-artifact@v2
-        with:
-          name: go-app-chart-${{ env.TAG_NAME }}.tgz
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: azure/setup-helm@v1
+      - name: Package Helm charts
+        run: >
+          helm package 
+          go-app-charts 
+          -d go-app-charts/charts 
+          --app-version ${{ env.TAG_NAME }} 
+          --version ${{ env.TAG_NAME }}
       - name: Create a Github release with Helm package
         uses: softprops/action-gh-release@v1
         with:
-          files: go-app-chart-*.tgz
+          files: go-app-charts/charts/go-app-chart-${{ env.TAG_NAME }}.tgz
