@@ -15,7 +15,12 @@ func welcomeHandler(rw http.ResponseWriter, r *http.Request) {
 	response := map[string]string{
 		"message": "Welcome!",
 	}
-	json.NewEncoder(rw).Encode(response)
+
+	err := json.NewEncoder(rw).Encode(response)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (app *App) initialiseRoutes() {
@@ -24,5 +29,9 @@ func (app *App) initialiseRoutes() {
 }
 
 func (app *App) run() {
-	http.ListenAndServe(":8080", app.Router)
+	err := http.ListenAndServe(":8080", app.Router)
+
+	if err != nil {
+		panic(err)
+	}
 }
