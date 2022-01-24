@@ -26,31 +26,16 @@ jobs:
           username: pavlospt
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: "pavlospt/go-app:${{ env.TAG_NAME }}"
+        run: make build_docker_image
       - uses: sigstore/cosign-installer@main
       - name: Sign Docker image
-        run: >
-          cosign sign 
-          -a "repo=${{ github.repository }}"
-          -a "workflow=${{ github.workflow }}"
-          -a "ref=${{ github.sha }}"
-          pavlospt/go-app:${{ env.TAG_NAME }}
+        run: make sign_docker_image
         env:
           # This is needed in order to use Sigstore Fulcio instance
           COSIGN_EXPERIMENTAL: "true"
       - uses: azure/setup-helm@v1
       - name: Package Helm charts
-        run: >
-          helm package 
-          go-app-charts 
-          -d go-app-charts/charts 
-          --app-version ${{ env.TAG_NAME }} 
-          --version ${{ env.TAG_NAME }}
+        run: make helm_package
       # The following steps are needed in order to get a kubeconfig entry with our credentials
       - name: Authenticate with Google project
         uses: 'google-github-actions/auth@v0'
@@ -63,16 +48,7 @@ jobs:
           cluster_name: 'go-cluster-gke-gke'
           location: 'europe-west1'
       - name: Install Helm chart
-        run: >
-          helm upgrade
-          --install
-          --force
-          --create-namespace
-          -n devops-challenge
-          --set image.tag=${{ env.TAG_NAME }}
-          --kubeconfig ${{ env.KUBECONFIG }}
-          go-app
-          ./go-app-charts/charts/go-app-${{ env.TAG_NAME }}.tgz
+        run: make helm_install
   
   package_helm:
     name: Prepare application Helm package
@@ -86,12 +62,7 @@ jobs:
         uses: actions/checkout@v2
       - uses: azure/setup-helm@v1
       - name: Package Helm charts
-        run: >
-          helm package 
-          go-app-charts 
-          -d go-app-charts/charts 
-          --app-version ${{ env.TAG_NAME }} 
-          --version ${{ env.TAG_NAME }}
+        run: make helm_package
       - name: Create a Github release with Helm package
         uses: softprops/action-gh-release@v1
         with:
